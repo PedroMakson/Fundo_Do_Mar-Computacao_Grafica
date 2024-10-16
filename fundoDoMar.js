@@ -16,9 +16,9 @@ document.getElementById('container').appendChild(renderizador.domElement);
 camera.position.z = 6;
 
 // Criar geometria de plano para o fundo do mar (areia)
-const geometria = new THREE.PlaneGeometry(25, 20);
-const material = new THREE.MeshPhongMaterial({ color: 0xFFE382 }); // cor amarelado da areia
-const fundoMar = new THREE.Mesh(geometria, material);
+const geometriaAreia = new THREE.PlaneGeometry(25, 20);
+const materialAreia = new THREE.MeshPhongMaterial({ color: 0xFFE382 }); // cor amarelado da areia
+const fundoMar = new THREE.Mesh(geometriaAreia, materialAreia);
 fundoMar.rotation.x = -Math.PI / 2;
 fundoMar.position.y = -2;
 cena.add(fundoMar);
@@ -111,6 +111,7 @@ carregador.load('system/models/nadador.glb', (gltf) => {
 const luzNadador = new THREE.PointLight(0xffff00, 10, 10);
 luzNadador.position.set(0, 0, 0);
 cena.add(luzNadador);
+
 // Criar bolhas
 const bolhas = []; // Array para armazenar as bolhas
 const quantidadeBolhas = 60; // Número total de bolhas a serem criadas
@@ -170,7 +171,6 @@ window.addEventListener('keyup', (evento) => {
         teclas[evento.key] = false; // Define o valor como 'false' (indicando que a tecla foi liberada)
     }
 });
-
 
 // Animação
 function animation() {
