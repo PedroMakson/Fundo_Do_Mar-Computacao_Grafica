@@ -6,14 +6,13 @@ const cena = new THREE.Scene();
 
 // Criar câmera (campo de visão, aspecto, recorte próximo e distante)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+// Posicionar a câmera
+camera.position.z = 6;
 
 // Criar renderizador
 const renderizador = new THREE.WebGLRenderer();
 renderizador.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('container').appendChild(renderizador.domElement);
-
-// Posicionar a câmera
-camera.position.z = 6;
 
 // Criar geometria de plano para o fundo do mar (areia)
 const geometriaAreia = new THREE.PlaneGeometry(25, 20);
@@ -60,14 +59,14 @@ carregador.load('system/models/barco.glb', (gltf) => {
 
 let barco2;
 carregador.load('system/models/barco.glb', (gltf) => {
-    barco = gltf.scene;
-    barco.scale.set(0.4, 0.4, 0.4);
-    barco.position.set(-5, -2, -8);
-    barco.rotation.y = Math.PI / -2;
-    barco.rotation.z = Math.PI / -4;
+    barco2 = gltf.scene;
+    barco2.scale.set(0.4, 0.4, 0.4);
+    barco2.position.set(-5, -2, -8);
+    barco2.rotation.y = Math.PI / -2;
+    barco2.rotation.z = Math.PI / -4;
     // barco.rotation.x = Math.PI / -2;
 
-    cena.add(barco);
+    cena.add(barco2);
 }, undefined, (erro) => {
     console.error('Erro ao carregar o barco:', erro);
 });
@@ -198,12 +197,13 @@ function animation() {
     // Animação das bolhas
     for (let i = 0; i < bolhas.length; i++) { // Loop para percorrer todas as bolhas no array
         const bolha = bolhas[i]; // Acessa a bolha atual do array
+        
         bolha.position.y += 0.01; // Move a bolha para cima, incrementando sua posição no eixo Y
 
         if (bolha.position.y > 2) { // Verifica se a bolha ultrapassou o limite superior
             bolha.position.y = -5; // Reinicia a posição da bolha abaixo da cena
-            bolha.position.x = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo X
-            bolha.position.z = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo Z
+            bolha.position.x = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo X.
+            bolha.position.z = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo Z.
         }
     }
 
