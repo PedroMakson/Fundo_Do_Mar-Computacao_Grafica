@@ -64,7 +64,6 @@ carregador.load('system/models/barco.glb', (gltf) => {
     barco2.position.set(-5, -2, -8);
     barco2.rotation.y = Math.PI / -2;
     barco2.rotation.z = Math.PI / -4;
-    // barco.rotation.x = Math.PI / -2;
 
     cena.add(barco2);
 }, undefined, (erro) => {
@@ -77,7 +76,7 @@ carregador.load('system/models/plantas.glb', (gltf) => {
     plantas = gltf.scene;
     plantas.scale.set(90, 90, 90);
     plantas.position.set(-7, -1, 0);
-    plantas.rotation.x = Math.PI / 7; // Inclinar as plantas para frente (45 graus, ajuste conforme necessário)
+    plantas.rotation.x = Math.PI / 7; // Inclinar as plantas para frente
     cena.add(plantas);
 }, undefined, (erro) => {
     console.error('Erro ao carregar as plantas:', erro);
