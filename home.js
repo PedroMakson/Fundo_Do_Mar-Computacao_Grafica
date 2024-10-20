@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Criar cena
 const scene = new THREE.Scene();
+const listener = new THREE.AudioListener();
 
 // Criar câmera (campo de visão, aspecto, recorte próximo e distante)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -11,6 +12,18 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('container').appendChild(renderer.domElement);
+// Associar o listener de áudio à câmera
+camera.add(listener);
+
+// Música de fundo
+const som = new THREE.Audio(listener);
+const carregadorAudio = new THREE.AudioLoader();
+carregadorAudio.load('system/sounds/SomDoMar.mp3', (buffer) => {
+    som.setBuffer(buffer);
+    som.setLoop(true);
+    som.setVolume(0.5);
+    som.play(); // Iniciar som ambiente
+});
 
 // Posicionar a câmera
 camera.position.z = 6;
@@ -34,53 +47,6 @@ scene.add(ambientLight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(-5, 3, 15);
 scene.add(directionalLight);
-
-// Carregar modelo da pedra
-const loader = new GLTFLoader();
-loader.load('system/models/pedra.glb', (gltf) => {
-    const stone = gltf.scene;
-    stone.scale.set(1, 1, 1);
-    stone.position.set(7, -2, -1);
-    scene.add(stone);
-}, undefined, (error) => {
-    console.error('Erro ao carregar a pedra:', error);
-});
-
-// Carregar modelo do barco
-let boat;
-loader.load('system/models/barco.glb', (gltf) => {
-    boat = gltf.scene;
-    boat.scale.set(0.4, 0.4, 0.4);
-    boat.position.set(5, -2, -2.5);
-    boat.rotation.z = Math.PI / -5;
-    scene.add(boat);
-}, undefined, (error) => {
-    console.error('Erro ao carregar o barco:', error);
-});
-
-// Carregar modelo das flores
-let flores;
-loader.load('system/models/flores.glb', (gltf) => {
-    flores = gltf.scene;
-    flores.scale.set(90, 90, 90);
-    flores.position.set(-7, -1, 0);
-    flores.rotation.x = Math.PI / 7; // Inclinar as flores para frente (45 graus, ajuste conforme necessário)
-    scene.add(flores);
-}, undefined, (error) => {
-    console.error('Erro ao carregar as flores:', error);
-});
-
-// Carregar modelo do tesouro
-let tesouro;
-loader.load('system/models/tesouro.glb', (gltf) => {
-    tesouro = gltf.scene;
-    tesouro.scale.set(0.03, 0.03, 0.03);
-    tesouro.position.set(-6, -2, 0);
-    tesouro.rotation.x = Math.PI / 9;
-    scene.add(tesouro);
-}, undefined, (error) => {
-    console.error('Erro ao carregar o tesouro:', error);
-});
 
 // Criar bolhas
 const bubbles = [];

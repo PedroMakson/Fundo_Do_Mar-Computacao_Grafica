@@ -3,11 +3,24 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Criar cena
 const cena = new THREE.Scene();
+const listener = new THREE.AudioListener();
 
 // Criar câmera (campo de visão, aspecto, recorte próximo e distante)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 // Posicionar a câmera
 camera.position.z = 6;
+// Associar o listener de áudio à câmera
+camera.add(listener);
+
+// Música de fundo
+const som = new THREE.Audio(listener);
+const carregadorAudio = new THREE.AudioLoader();
+carregadorAudio.load('system/sounds/SomDoMar.mp3', (buffer) => {
+    som.setBuffer(buffer);
+    som.setLoop(true);
+    som.setVolume(0.5);
+    som.play(); // Iniciar som ambiente
+});
 
 // Criar renderizador
 const renderizador = new THREE.WebGLRenderer();
@@ -18,7 +31,7 @@ document.getElementById('container').appendChild(renderizador.domElement);
 const geometriaAreia = new THREE.PlaneGeometry(25, 20);
 const materialAreia = new THREE.MeshPhongMaterial({ color: 0xFFE382 }); // cor amarelado da areia
 const fundoMar = new THREE.Mesh(geometriaAreia, materialAreia);
-fundoMar.rotation.x = -Math.PI / 2;
+fundoMar.rotation.x = -Math.PI / 2; //-90
 fundoMar.position.y = -2;
 cena.add(fundoMar);
 
@@ -34,16 +47,8 @@ const luzDirecional = new THREE.DirectionalLight(0xffffff, 0.5);
 luzDirecional.position.set(-5, 3, 15);
 cena.add(luzDirecional);
 
-// Carregar modelo da pedra
+// Carregador
 const carregador = new GLTFLoader();
-carregador.load('system/models/pedra.glb', (gltf) => {
-    const pedra = gltf.scene;
-    pedra.scale.set(1, 1, 1);
-    pedra.position.set(7, -2, -1);
-    cena.add(pedra);
-}, undefined, (erro) => {
-    console.error('Erro ao carregar a pedra:', erro);
-});
 
 // Carregar modelo do barco
 let barco;
@@ -82,16 +87,38 @@ carregador.load('system/models/plantas.glb', (gltf) => {
     console.error('Erro ao carregar as plantas:', erro);
 });
 
+// Carregar modelo da pedra
+carregador.load('system/models/pedra.glb', (gltf) => {
+    const pedra = gltf.scene;
+    pedra.scale.set(1, 1, 1);
+    pedra.position.set(6, -2, -1);
+    cena.add(pedra);
+}, undefined, (erro) => {
+    console.error('Erro ao carregar a pedra:', erro);
+});
+
 // Carregar modelo do tesouro
 let tesouro;
 carregador.load('system/models/tesouro.glb', (gltf) => {
     tesouro = gltf.scene;
     tesouro.scale.set(0.03, 0.03, 0.03);
-    tesouro.position.set(-6, -2, 0);
+    tesouro.position.set(8, -2, -2);
     tesouro.rotation.x = Math.PI / 9;
     cena.add(tesouro);
 }, undefined, (erro) => {
     console.error('Erro ao carregar o tesouro:', erro);
+});
+
+// Carregar modelo do ancora
+let ancora;
+carregador.load('system/models/ancora.glb', (gltf) => {
+    ancora = gltf.scene;
+    ancora.scale.set(0.03, 0.03, 0.03);
+    ancora.position.set(-4, -3, 2);
+    // ancora.rotation.x = Math.PI / 9;
+    cena.add(ancora);
+}, undefined, (erro) => {
+    console.error('Erro ao carregar a ancora:', erro);
 });
 
 // Carregar modelo do nadador
@@ -104,6 +131,13 @@ carregador.load('system/models/nadador.glb', (gltf) => {
 }, undefined, (erro) => {
     console.error('Erro ao carregar o nadador:', erro);
 });
+
+// Função para detectar colisão entre dois objetos
+function detectarColisao(obj1, obj2) {
+    const box1 = new THREE.Box3().setFromObject(obj1);
+    const box2 = new THREE.Box3().setFromObject(obj2);
+    return box1.intersectsBox(box2);
+}
 
 // Criar luz pontual (PointLight) amarela
 const luzNadador = new THREE.PointLight(0xffff00, 10, 10);
@@ -196,7 +230,7 @@ function animation() {
     // Animação das bolhas
     for (let i = 0; i < bolhas.length; i++) { // Loop para percorrer todas as bolhas no array
         const bolha = bolhas[i]; // Acessa a bolha atual do array
-        
+
         bolha.position.y += 0.01; // Move a bolha para cima, incrementando sua posição no eixo Y
 
         if (bolha.position.y > 2) { // Verifica se a bolha ultrapassou o limite superior
@@ -204,6 +238,11 @@ function animation() {
             bolha.position.x = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo X.
             bolha.position.z = (Math.random() - 0.5) * 20; // Gera uma nova posição aleatória no eixo Z.
         }
+    }
+
+    // Verificar colisão entre nadador e tesouro
+    if (tesouro && nadador && detectarColisao(nadador, tesouro)) {
+        window.location.href = 'youWin.html'; // Redireciona para a página "youWin.html"
     }
 
     // Renderizar a cena
