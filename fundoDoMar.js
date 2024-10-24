@@ -132,6 +132,20 @@ carregador.load('system/models/nadador.glb', (gltf) => {
     console.error('Erro ao carregar o nadador:', erro);
 });
 
+// Carregar modelo do tubarao
+let tubarao;
+let sharkAngle = 0; // Ângulo inicial para o movimento circular do tubarão
+const sharkRadius = 6; // Raio do movimento circular
+
+carregador.load('system/models/tubarao.glb', (gltf) => {
+    tubarao = gltf.scene;
+    tubarao.scale.set(0.003, 0.003, 0.003);
+    tubarao.position.set(sharkRadius, 1, 0); // Começar no raio definid
+    cena.add(tubarao);
+}, undefined, (erro) => {
+    console.error('Erro ao carregar o tubarao:', erro);
+});
+
 // Função para detectar colisão entre dois objetos
 function detectarColisao(obj1, obj2) {
     const box1 = new THREE.Box3().setFromObject(obj1);
@@ -240,9 +254,22 @@ function animation() {
         }
     }
 
+    // Movimento circular do tubarão
+    if (tubarao) {
+        sharkAngle += 0.01; // Incrementar o ângulo para o movimento
+        tubarao.position.x = Math.cos(sharkAngle) * sharkRadius; // Coordenada x ao longo da circunferência
+        tubarao.position.z = Math.sin(sharkAngle) * sharkRadius; // Coordenada z ao longo da circunferência
+        tubarao.rotation.y = -sharkAngle; // Ajustar a rotação para olhar na direção do movimento
+    }
+
     // Verificar colisão entre nadador e tesouro
     if (tesouro && nadador && detectarColisao(nadador, tesouro)) {
         window.location.href = 'youWin.html'; // Redireciona para a página "youWin.html"
+    }
+
+    // Verificar colisão entre nadador e tubarao
+    if (tesouro && nadador && detectarColisao(nadador, tubarao)) {
+        window.location.href = 'youLost.html'; // Redireciona para a página "youWin.html"
     }
 
     // Renderizar a cena
