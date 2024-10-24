@@ -97,18 +97,6 @@ carregador.load('system/models/pedra.glb', (gltf) => {
     console.error('Erro ao carregar a pedra:', erro);
 });
 
-// Carregar modelo do tesouro
-let tesouro;
-carregador.load('system/models/tesouro.glb', (gltf) => {
-    tesouro = gltf.scene;
-    tesouro.scale.set(0.03, 0.03, 0.03);
-    tesouro.position.set(8, -2, -2);
-    tesouro.rotation.x = Math.PI / 9;
-    cena.add(tesouro);
-}, undefined, (erro) => {
-    console.error('Erro ao carregar o tesouro:', erro);
-});
-
 // Carregar modelo do ancora
 let ancora;
 carregador.load('system/models/ancora.glb', (gltf) => {
